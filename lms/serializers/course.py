@@ -7,7 +7,7 @@ from lms.serializers.lesson import CourseLessonListSerializer
 
 class CourseSerializer(serializers.ModelSerializer):
     """Дефолтный сериалайзер для всех операций, кроме retrieve, с доп.полем вывода кол-ва уроков в курсе"""
-    lessons_count = IntegerField()
+    lessons_count = IntegerField(read_only=True)
 
     class Meta:
         model = Course
