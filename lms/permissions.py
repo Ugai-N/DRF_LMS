@@ -15,7 +15,6 @@ class IsModerator(BasePermission):
     message = "Вы не являетесь модератором"
 
     def has_permission(self, request, view):
-        print(request.user.groups.all())
         if request.user.groups.filter(name='Модератор').exists():
             return True
         return False

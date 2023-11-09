@@ -36,4 +36,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         в которое вписываем сущность с related_name=lesson"""
 
         self.queryset = self.queryset.annotate(lessons_count=Count('lesson'))
+
+        if not self.request.user.groups.filter(name='Модератор').exists():
+            self.queryset = self.queryset.filter(pk__in=self.request.user.courses.all())
         return super().list(request, *args, **kwargs)

@@ -8,8 +8,14 @@ from lms.serializers.lesson import LessonSerializer, LessonListSerializer
 
 class LessonListAPIView(ListAPIView):
     serializer_class = LessonListSerializer
-    queryset = Lesson.objects.all()
+    # queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = Lesson.objects.all()
+        if not self.request.user.groups.filter(name='Модератор').exists():
+            queryset = queryset.filter(pk__in=self.request.user.lessons.all())
+        return queryset
 
 
 class LessonCreateAPIView(CreateAPIView):
