@@ -20,7 +20,7 @@ class LessonListAPIView(ListAPIView):
             queryset = queryset.filter(pk__in=self.request.user.lessons.all()) | queryset.filter(owner=self.request.user)
             # queryset = queryset.filter(pk__in=self.request.user.lessons.all())
             # queryset = queryset.filter(owner=self.request.user)
-        return queryset
+        return queryset.order_by('id')
 
 
 class LessonCreateAPIView(CreateAPIView):
