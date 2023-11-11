@@ -1,6 +1,15 @@
 from rest_framework.permissions import BasePermission
 
 
+class IsOwner(BasePermission):
+    message = "Вы не автор"
+
+    def has_object_permission(self, request, view, obj):
+        if request.user == obj.owner:
+            return True
+        return False
+
+
 class IsStudent(BasePermission):
     message = "У вас недостаточно прав"
 

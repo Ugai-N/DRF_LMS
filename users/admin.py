@@ -20,6 +20,7 @@ class LessonAdmin(admin.ModelAdmin):
 class CourseAdmin(admin.ModelAdmin):
     list_display = ('title', 'description', 'owner')
     list_filter = ('owner',)
+    ordering = ('title',)
 
 
 @admin.register(Payment)

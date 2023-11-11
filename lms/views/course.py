@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from lms.models import Course
 from lms.paginators import CourseLessonPaginator
-from lms.permissions import IsModerator, IsStudent
+from lms.permissions import IsModerator, IsStudent, IsOwner
 from lms.serializers.course import CourseSerializer, CourseDetailSerializer
 
 
@@ -21,10 +21,12 @@ class CourseViewSet(viewsets.ModelViewSet):
         permission_classes = [IsAuthenticated]
         if self.action == 'create':
             permission_classes.append(~IsModerator)
-        if self.action in ['retrieve', 'update', 'partial_update']:
-            permission_classes.append(IsStudent | IsModerator)
+        if self.action in ['retrieve']:
+            permission_classes.append(IsStudent | IsModerator | IsOwner)
+        if self.action in ['update', 'partial_update']:
+            permission_classes.append(IsModerator | IsOwner)
         if self.action == 'destroy':
-            permission_classes.append(IsStudent)
+            permission_classes.append(IsOwner)
         return [permission() for permission in permission_classes]
 
     def get_serializer_class(self):
@@ -39,8 +41,9 @@ class CourseViewSet(viewsets.ModelViewSet):
 
         self.queryset = self.queryset.annotate(lessons_count=Count('lesson'))
 
+        """Выводим список курсов, по которым пользователь является либо учеником, либо автором. Модераторам видны все"""
         if not self.request.user.groups.filter(name='Модератор').exists():
-            self.queryset = self.queryset.filter(pk__in=self.request.user.courses.all())
+            self.queryset = self.queryset.filter(pk__in=self.request.user.courses.all()) | self.queryset.filter(owner=self.request.user)
         return super().list(request, *args, **kwargs)
 
 # инфа по разнице create-perfrom create

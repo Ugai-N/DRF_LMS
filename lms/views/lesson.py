@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from lms.models import Lesson
 from lms.paginators import CourseLessonPaginator
-from lms.permissions import IsModerator, IsStudent
+from lms.permissions import IsModerator, IsStudent, IsOwner
 from lms.serializers.lesson import LessonSerializer, LessonListSerializer, LessonCreateSerializer
 
 
@@ -14,9 +14,12 @@ class LessonListAPIView(ListAPIView):
     pagination_class = CourseLessonPaginator
 
     def get_queryset(self, *args, **kwargs):
+        """Выводим список уроков, по которым пользователь является либо учеником, либо автором. Модераторам видны все"""
         queryset = Lesson.objects.all()
         if not self.request.user.groups.filter(name='Модератор').exists():
-            queryset = queryset.filter(pk__in=self.request.user.lessons.all())
+            queryset = queryset.filter(pk__in=self.request.user.lessons.all()) | queryset.filter(owner=self.request.user)
+            # queryset = queryset.filter(pk__in=self.request.user.lessons.all())
+            # queryset = queryset.filter(owner=self.request.user)
         return queryset
 
 
@@ -25,6 +28,7 @@ class LessonCreateAPIView(CreateAPIView):
     permission_classes = [IsAuthenticated, ~IsModerator]
 
     def perform_create(self, serializer):
+        """Сохраняем текущего пользователя в авторы (owner)"""
         new_lesson = serializer.save()
         new_lesson.owner = self.request.user
         new_lesson.save()
@@ -33,15 +37,15 @@ class LessonCreateAPIView(CreateAPIView):
 class LessonRetrieveAPIView(RetrieveAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsAuthenticated, IsStudent | IsModerator]
+    permission_classes = [IsAuthenticated, IsStudent | IsModerator | IsOwner]
 
 
 class LessonUpdateAPIView(UpdateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsAuthenticated, IsStudent | IsModerator]
+    permission_classes = [IsAuthenticated, IsOwner | IsModerator]
 
 
 class LessonDeleteAPIView(DestroyAPIView):
     queryset = Lesson.objects.all()
-    permission_classes = [IsAuthenticated, IsStudent]
+    permission_classes = [IsAuthenticated, IsOwner]
