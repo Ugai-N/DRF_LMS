@@ -43,11 +43,12 @@ class CourseViewSet(viewsets.ModelViewSet):
 
         """Выводим список курсов, по которым пользователь является либо учеником, либо автором. Модераторам видны все"""
         if not self.request.user.groups.filter(name='Модератор').exists():
-            self.queryset = self.queryset.filter(pk__in=self.request.user.courses.all()) | self.queryset.filter(owner=self.request.user)
+            self.queryset = self.queryset.filter(pk__in=self.request.user.courses.all()) | \
+                            self.queryset.filter(owner=self.request.user)
         return super().list(request, *args, **kwargs)
 
-# инфа по разнице create-perfrom create
-# https://www.django-rest-framework.org/api-guide/generic-views/#genericapiview
-# https://stackoverflow.com/questions/41094013/when-to-use-serializers-create-and-modelviewsets-perform-create
+    # инфа по разнице create-perfrom create
+    # https://www.django-rest-framework.org/api-guide/generic-views/#genericapiview
+    # https://stackoverflow.com/questions/41094013/when-to-use-serializers-create-and-modelviewsets-perform-create
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
