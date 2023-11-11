@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from lms.models import Course
+from lms.paginators import CourseLessonPaginator
 from lms.permissions import IsModerator, IsStudent
 from lms.serializers.course import CourseSerializer, CourseDetailSerializer
 
@@ -14,6 +15,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     serializers_list = {
         "retrieve": CourseDetailSerializer,
     }
+    pagination_class = CourseLessonPaginator
 
     def get_permissions(self):
         permission_classes = [IsAuthenticated]
