@@ -12,6 +12,7 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ('id', 'title', 'preview', 'description', 'lessons_count')
+        read_only_fields = ('owner',)
 
 
 class CourseDetailSerializer(serializers.ModelSerializer):
@@ -20,7 +21,7 @@ class CourseDetailSerializer(serializers.ModelSerializer):
     subscription = serializers.SerializerMethodField()
 
     def get_subscription(self, instance):
-        subscription = [sub for sub in instance.subscription.all() if sub.user == self.context['request'].user]
+        subscription = [sub for sub in instance.subscription.all() if sub.owner == self.context['request'].user]
         if subscription:
             if subscription[0].is_active:
                 return f'Подписка активна'

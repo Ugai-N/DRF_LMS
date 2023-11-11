@@ -48,19 +48,6 @@ class CourseViewSet(viewsets.ModelViewSet):
                             self.queryset.filter(owner=self.request.user)
         return super().list(request, *args, **kwargs)
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
-
-
-        # print(self.kwargs) #{'pk': '1'}
-
-        # print(self.args)
-        print(self.queryset)
-        # self.queryset = self.queryset.annotate(lessons_count=Count('lesson'))
-
-
     # инфа по разнице create-perfrom create
     # https://www.django-rest-framework.org/api-guide/generic-views/#genericapiview
     # https://stackoverflow.com/questions/41094013/when-to-use-serializers-create-and-modelviewsets-perform-create

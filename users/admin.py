@@ -6,7 +6,7 @@ from users.models import User
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'email', 'phone', 'city', 'avatar', 'is_superuser', 'is_staff')
+    list_display = ('pk', 'first_name', 'email', 'phone', 'city', 'avatar', 'is_superuser', 'is_staff')
     list_filter = ('is_superuser', 'is_staff',)
 
 
@@ -31,5 +31,5 @@ class PaymentAdmin(admin.ModelAdmin):
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ('user', 'course', 'is_active')
-    list_filter = ('user', 'course', 'is_active')
+    list_display = ('owner', 'course', 'is_active')
+    list_filter = ('owner', 'course', 'is_active')

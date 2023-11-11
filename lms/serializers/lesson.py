@@ -13,11 +13,13 @@ class LessonCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
         validators = [OnlyYoutubeValidator(field='video'), OnlyYoutubeValidator(field='description'),
                       serializers.UniqueTogetherValidator(fields=['title', 'course'], queryset=Lesson.objects.all())]
+        read_only_fields = ('owner',)
 
 
 class LessonSerializer(serializers.ModelSerializer):
     """Общий сериалайзер с выводом полной информации об уроке"""
     course = SlugRelatedField(slug_field='title', queryset=Course.objects.all())
+    read_only_fields = ('owner',)
 
     class Meta:
         model = Lesson
