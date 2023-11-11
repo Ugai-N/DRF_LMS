@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from users.models import NULLABLE
@@ -7,6 +8,7 @@ class Course(models.Model):
     title = models.CharField(max_length=250, verbose_name='название')
     preview = models.ImageField(upload_to='course_preview/', verbose_name='превью', **NULLABLE)
     description = models.TextField(verbose_name='описание', **NULLABLE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор", **NULLABLE, related_name='created_courses')
 
 
 class Lesson(models.Model):
@@ -15,6 +17,7 @@ class Lesson(models.Model):
     description = models.TextField(verbose_name='описание', **NULLABLE)
     video = models.CharField(max_length=250, verbose_name='ссылка', **NULLABLE)
     course = models.ForeignKey('Course', on_delete=models.CASCADE, verbose_name='курс', related_name='lesson')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор", **NULLABLE, related_name='created_lessons')
 
 
 class Payment(models.Model):

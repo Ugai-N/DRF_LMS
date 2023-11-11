@@ -6,19 +6,20 @@ from users.models import User
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'phone', 'city', 'avatar', 'is_superuser', 'is_staff')
+    list_display = ('first_name', 'email', 'phone', 'city', 'avatar', 'is_superuser', 'is_staff')
     list_filter = ('is_superuser', 'is_staff',)
 
 
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'course',)
-    list_filter = ('course',)
+    list_display = ('title', 'description', 'course', 'owner')
+    list_filter = ('course', 'owner')
 
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description',)
+    list_display = ('title', 'description', 'owner')
+    list_filter = ('owner',)
 
 
 @admin.register(Payment)

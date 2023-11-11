@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from lms.models import Lesson
 from lms.paginators import CourseLessonPaginator
 from lms.permissions import IsModerator, IsStudent
-from lms.serializers.lesson import LessonSerializer, LessonListSerializer
+from lms.serializers.lesson import LessonSerializer, LessonListSerializer, LessonCreateSerializer
 
 
 class LessonListAPIView(ListAPIView):
@@ -21,7 +21,7 @@ class LessonListAPIView(ListAPIView):
 
 
 class LessonCreateAPIView(CreateAPIView):
-    serializer_class = LessonSerializer
+    serializer_class = LessonCreateSerializer
     permission_classes = [IsAuthenticated, ~IsModerator]
 
 
