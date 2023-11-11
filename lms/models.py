@@ -34,3 +34,10 @@ class Payment(models.Model):
                                **NULLABLE)
     amount_paid = models.IntegerField(verbose_name='сумма оплаты')
     payment_method = models.CharField(max_length=150, choices=PAYMENT_CHOICES, verbose_name='метод оплаты')
+
+
+class Subscription(models.Model):
+    course = models.ForeignKey('Course', on_delete=models.CASCADE, verbose_name='курс', related_name='subscription')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="подписчик", related_name='subscription')
+    is_active = models.BooleanField(verbose_name='подписка активна', default=False)
+

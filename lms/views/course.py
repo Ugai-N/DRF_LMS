@@ -1,6 +1,7 @@
 from django.db.models import Count
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from lms.models import Course
 from lms.paginators import CourseLessonPaginator
@@ -46,6 +47,19 @@ class CourseViewSet(viewsets.ModelViewSet):
             self.queryset = self.queryset.filter(pk__in=self.request.user.courses.all()) | \
                             self.queryset.filter(owner=self.request.user)
         return super().list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
+        # print(self.kwargs) #{'pk': '1'}
+
+        # print(self.args)
+        print(self.queryset)
+        # self.queryset = self.queryset.annotate(lessons_count=Count('lesson'))
+
 
     # инфа по разнице create-perfrom create
     # https://www.django-rest-framework.org/api-guide/generic-views/#genericapiview
