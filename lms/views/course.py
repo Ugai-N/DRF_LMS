@@ -42,3 +42,9 @@ class CourseViewSet(viewsets.ModelViewSet):
         if not self.request.user.groups.filter(name='Модератор').exists():
             self.queryset = self.queryset.filter(pk__in=self.request.user.courses.all())
         return super().list(request, *args, **kwargs)
+
+# инфа по разнице create-perfrom create
+# https://www.django-rest-framework.org/api-guide/generic-views/#genericapiview
+# https://stackoverflow.com/questions/41094013/when-to-use-serializers-create-and-modelviewsets-perform-create
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
