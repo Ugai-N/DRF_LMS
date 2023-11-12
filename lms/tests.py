@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
-from lms.models import Course, Lesson
+from lms.models import Course, Lesson, Subscription
 from users.models import User
 
 
@@ -24,6 +24,11 @@ class LessonTestCase(APITestCase):
 
         course = Course.objects.create(title='test_course')
         lesson = Lesson.objects.create(title='test_lesson', course=course)
+
+    # def tearDown(self):
+    #     # Очистит базу данных после теста и сбросьте счетчик id
+    #     Lesson.objects.all().delete()
+    #     self.reset_sequences()
 
     def test_setup(self):
         """Тестирование создание урока в SetUp - OK"""
@@ -133,7 +138,6 @@ class LessonTestCase(APITestCase):
             'title': 'test_lesson_upd'
         }
         response = self.client.patch('/lessons/1/edit/', data=data)
-        print(response.content)
 
         # проверяем, что у пользователя нет прав
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -174,3 +178,18 @@ class LessonTestCase(APITestCase):
 
         # проверяем, что в БД 1 урок
         self.assertEqual(Lesson.objects.all().count(), 1)
+
+    def test_subscription_activation(self):
+        """Тестирование активации подписки"""
+
+        data = {
+            'course': 1
+        }
+        response = self.client.post('/subscribe/', data=data)
+        # print(response.content)
+
+        # проверяем, что нет ошибок
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # проверяем, что в БД 1 урок
+        self.assertEqual(Subscription.objects.get(owner=self.user.id).is_active, True)
