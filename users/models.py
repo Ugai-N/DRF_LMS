@@ -13,5 +13,5 @@ class User(AbstractUser):
     phone = models.CharField(verbose_name='телефон', max_length=35, **NULLABLE)
     city = models.CharField(verbose_name='город', max_length=50, **NULLABLE)
     avatar = models.ImageField(verbose_name='аватар', upload_to='users/', **NULLABLE)
-    courses = models.ManyToManyField('lms.Course', verbose_name='курсы пользователя', related_name='students')
-    lessons = models.ManyToManyField('lms.Lesson', verbose_name='уроки пользователя', related_name='students')
+    courses = models.ManyToManyField('lms.Course', verbose_name='курсы пользователя', related_name='students', blank=True)
+    lessons = models.ManyToManyField('lms.Lesson', verbose_name='уроки пользователя', related_name='students', blank=True)
