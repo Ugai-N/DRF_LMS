@@ -2,6 +2,7 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from lms.apps import LmsConfig
+from lms.stripe_services import my_webhook_view
 from lms.views.course import CourseViewSet
 from lms.views.lesson import LessonListAPIView, LessonCreateAPIView, LessonRetrieveAPIView, LessonUpdateAPIView, \
     LessonDeleteAPIView
@@ -21,4 +22,5 @@ urlpatterns = [
                   path('lessons/<int:pk>/delete/', LessonDeleteAPIView.as_view(), name='delete_lesson'),
                   path('subscribe/', SubscriptionCreateAPIView.as_view(), name='subscribe'),
                   path('<int:pk>/unsubscribe/', SubscriptionDeleteAPIView.as_view(), name='unsubscribe'),
+                  path('webhook/', my_webhook_view, name='webhook')
               ] + router.urls
