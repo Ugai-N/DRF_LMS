@@ -6,8 +6,8 @@ from django.http import HttpResponse
 from lms.models import Payment
 
 stripe.api_key = settings.STRIPE_API_KEY
-# endpoint_secret = settings.STRIPE_ENDPOINT
-endpoint_secret = 'whsec_a5e8c168bbe05f5a3590213d8bfb1df9f290cb88e0d4ce71b2d03be7a2bd5b0c'
+endpoint_secret = settings.STRIPE_ENDPOINT
+
 
 def create_checkout_session(request):
     checkout_session = stripe.checkout.Session.create(
@@ -85,13 +85,10 @@ def fulfill_order(session):
     payment_obj.payment_status = 'succeed'
     payment_obj.save()
 
-    print(payment_obj.course)
     if payment_obj.course:
         payment_obj.user.courses.add(payment_obj.course.id)
-        print(payment_obj.user.courses)
     else:
         payment_obj.user.lessons.add(payment_obj.lesson.id)
-        print(payment_obj.user.lessons)
     payment_obj.user.save()
 
     # retrieve_report = stripe.checkout.Session.retrieve(session.id)
