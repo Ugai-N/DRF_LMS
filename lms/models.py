@@ -8,7 +8,8 @@ class Course(models.Model):
     title = models.CharField(max_length=250, verbose_name='название')
     preview = models.ImageField(upload_to='course_preview/', verbose_name='превью', **NULLABLE)
     description = models.TextField(verbose_name='описание', **NULLABLE)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор", **NULLABLE, related_name='created_courses')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор", **NULLABLE,
+                              related_name='created_courses')
 
 
 class Lesson(models.Model):
@@ -17,7 +18,8 @@ class Lesson(models.Model):
     description = models.TextField(verbose_name='описание', **NULLABLE)
     video = models.CharField(max_length=250, verbose_name='ссылка', **NULLABLE)
     course = models.ForeignKey('Course', on_delete=models.CASCADE, verbose_name='курс', related_name='lesson')
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор", **NULLABLE, related_name='created_lessons')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор", **NULLABLE,
+                              related_name='created_lessons')
 
 
 class Payment(models.Model):
@@ -26,7 +28,7 @@ class Payment(models.Model):
         ('TT', 'Перевод на счет')
     ]
 
-    user = models.ForeignKey('users.User', on_delete=models.CASCADE, verbose_name='плательщик', related_name='payment')
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE, verbose_name='плательщик', related_name='payment', **NULLABLE)
     payment_date = models.DateField(auto_now_add=True, verbose_name='дата оплаты')
     course = models.ForeignKey('Course', on_delete=models.CASCADE, verbose_name='курс', related_name='payment',
                                **NULLABLE)
@@ -34,10 +36,13 @@ class Payment(models.Model):
                                **NULLABLE)
     amount_paid = models.IntegerField(verbose_name='сумма оплаты')
     payment_method = models.CharField(max_length=150, choices=PAYMENT_CHOICES, verbose_name='метод оплаты')
+    payment_link = models.CharField(max_length=1000, verbose_name='ссылка на оплату', null=True)
+    payment_status = models.CharField(max_length=200, verbose_name='статус оплаты', default='pending')
+    payment_session_stripe_id = models.CharField(max_length=200, verbose_name='сессия stripe', null=True)
 
 
 class Subscription(models.Model):
     course = models.ForeignKey('Course', on_delete=models.CASCADE, verbose_name='курс', related_name='subscription')
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="подписчик", related_name='subscription', **NULLABLE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="подписчик",
+                              related_name='subscription', **NULLABLE)
     is_active = models.BooleanField(verbose_name='подписка активна', default=False)
-
