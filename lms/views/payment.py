@@ -5,10 +5,12 @@ from rest_framework import viewsets, status
 from rest_framework.filters import OrderingFilter
 from rest_framework.response import Response
 
-from lms.models import Payment
+from lms.models import Payment, Lesson
 from lms.serializers.payment import PaymentSerializer
 
 import stripe
+
+from users.models import User
 
 stripe.api_key = settings.STRIPE_API_KEY
 

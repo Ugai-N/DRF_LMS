@@ -87,10 +87,10 @@ def fulfill_order(session):
 
     print(payment_obj.course)
     if payment_obj.course:
-        payment_obj.user.courses.set([payment_obj.course.id])
+        payment_obj.user.courses.add(payment_obj.course.id)
         print(payment_obj.user.courses)
     else:
-        payment_obj.user.lessons.set([payment_obj.lesson.id])
+        payment_obj.user.lessons.add(payment_obj.lesson.id)
         print(payment_obj.user.lessons)
     payment_obj.user.save()
 
