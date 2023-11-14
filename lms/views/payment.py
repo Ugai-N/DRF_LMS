@@ -50,9 +50,6 @@ class PaymentViewSet(viewsets.ModelViewSet):
         request.data['payment_link'] = checkout_session.url
         request.data['payment_session_stripe_id'] = checkout_session.id
 
-        # Заполняем поле плательщита в Платеже и добавляем пользователю курсы ученика
-        request.data['user'] = self.request.user
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -60,3 +57,6 @@ class PaymentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
         # return HttpResponseRedirect(checkout_session.url)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
