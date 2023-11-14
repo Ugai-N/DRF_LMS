@@ -30,6 +30,8 @@ class LessonTestCase(APITestCase):
     #     Lesson.objects.all().delete()
     #     self.reset_sequences()
 
+    # self.lesson.refresh_from_db()
+
     def test_setup(self):
         """Тестирование создание урока в SetUp - OK"""
 

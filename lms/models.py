@@ -34,6 +34,8 @@ class Payment(models.Model):
                                **NULLABLE)
     amount_paid = models.IntegerField(verbose_name='сумма оплаты')
     payment_method = models.CharField(max_length=150, choices=PAYMENT_CHOICES, verbose_name='метод оплаты')
+    payment_link = models.CharField(max_length=1000, verbose_name='ссылка на оплату', null=True)
+    payment_status = models.CharField(max_length=200, verbose_name='статус оплаты', default='pending')
 
 
 class Subscription(models.Model):
