@@ -18,7 +18,7 @@ class LessonAdmin(admin.ModelAdmin):
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'owner')
+    list_display = ('title', 'description', 'owner', 'updated_at')
     list_filter = ('owner',)
     ordering = ('title',)
 

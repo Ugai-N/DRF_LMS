@@ -10,6 +10,7 @@ class Course(models.Model):
     description = models.TextField(verbose_name='описание', **NULLABLE)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор", **NULLABLE,
                               related_name='created_courses')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='дата изменения')
 
 
 class Lesson(models.Model):

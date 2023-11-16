@@ -2,6 +2,8 @@ from django.db.models import Count
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
+from lms.services import update_course_data
+from lms.tasks import SendUpdateMail
 from lms.models import Course
 from lms.paginators import CourseLessonPaginator
 from lms.permissions import IsModerator, IsStudent, IsOwner
@@ -52,3 +54,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     # https://stackoverflow.com/questions/41094013/when-to-use-serializers-create-and-modelviewsets-perform-create
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        updated_course = serializer.save()
+        update_course_data(updated_course, 'Изменен')
