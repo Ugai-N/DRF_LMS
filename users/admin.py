@@ -6,8 +6,8 @@ from users.models import User
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'first_name', 'email', 'phone', 'city', 'avatar', 'is_superuser', 'is_staff')
-    list_filter = ('is_superuser', 'is_staff',)
+    list_display = ('pk', 'first_name', 'email', 'is_superuser', 'is_staff', 'last_login', 'is_active', 'phone', 'city', 'avatar')
+    list_filter = ('is_superuser', 'is_staff', 'is_active',)
 
 
 @admin.register(Lesson)
@@ -18,7 +18,7 @@ class LessonAdmin(admin.ModelAdmin):
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'owner')
+    list_display = ('title', 'description', 'owner', 'updated_at')
     list_filter = ('owner',)
     ordering = ('title',)
 
