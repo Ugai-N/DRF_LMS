@@ -2,8 +2,7 @@ from django.db.models import Count
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
-from lms.services import update_course_data
-from lms.tasks import SendUpdateMail
+from lms.tasks import update_course_data
 from lms.models import Course
 from lms.paginators import CourseLessonPaginator
 from lms.permissions import IsModerator, IsStudent, IsOwner
@@ -57,4 +56,4 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         updated_course = serializer.save()
-        update_course_data(updated_course, 'Изменен')
+        update_course_data.delay(updated_course.pk, 'Course', 'Изменен')

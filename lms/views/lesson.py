@@ -5,7 +5,7 @@ from lms.models import Lesson
 from lms.paginators import CourseLessonPaginator
 from lms.permissions import IsModerator, IsStudent, IsOwner
 from lms.serializers.lesson import LessonSerializer, LessonListSerializer, LessonCreateSerializer
-from lms.services import update_course_data
+from lms.tasks import update_course_data
 
 
 class LessonListAPIView(ListAPIView):
@@ -33,7 +33,7 @@ class LessonCreateAPIView(CreateAPIView):
         new_lesson = serializer.save()
         new_lesson.owner = self.request.user
         new_lesson.save()
-        update_course_data(new_lesson, 'Создан')
+        update_course_data.delay(new_lesson.pk, 'Lesson', 'Создан')
 
 
 class LessonRetrieveAPIView(RetrieveAPIView):
@@ -49,7 +49,7 @@ class LessonUpdateAPIView(UpdateAPIView):
 
     def perform_update(self, serializer):
         updated_lesson = serializer.save()
-        update_course_data(updated_lesson, 'Изменен')
+        update_course_data.delay(updated_lesson.pk, 'Lesson', 'Изменен')
 
 
 class LessonDeleteAPIView(DestroyAPIView):
