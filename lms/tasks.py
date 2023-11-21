@@ -49,3 +49,10 @@ def deactivate_users():
         for us in User.objects.filter(**filter):
             setattr(us, 'is_active', 'False')
             us.save()
+
+
+@shared_task
+def testing_tasks(text1, text2, title_name):
+    print(f'{text1} {text2}')
+    print(title_name)
+
