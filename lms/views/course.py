@@ -1,12 +1,15 @@
+import datetime
+
 from django.db.models import Count
+from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
-from lms.tasks import update_course_data
 from lms.models import Course
 from lms.paginators import CourseLessonPaginator
 from lms.permissions import IsModerator, IsStudent, IsOwner
 from lms.serializers.course import CourseSerializer, CourseDetailSerializer
+from lms.services import set_schedule, disable_task
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -54,6 +57,15 @@ class CourseViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
-    def perform_update(self, serializer):
+    def perform_update(self, serializer, update_course_data=None):
         updated_course = serializer.save()
-        update_course_data.delay(updated_course.pk, 'Course', 'Изменен')
+        # update_course_data.delay(updated_course.pk, 'Course', 'Изменен')
+
+        #пример того как можно запустить периодические по расписанию
+        #### set_schedule(updated_course.title, 20, 3, 'hello', 'again', title=updated_course.title)
+        # start_at = timezone.now() + datetime.timedelta(minutes=2)
+        # set_schedule(task_name=updated_course.title, every=20, period=3, start_at=start_at, text1='hello', text2='again', title=updated_course.title)
+
+
+        #пример того, как деактивировать таску:
+        # disable_task()

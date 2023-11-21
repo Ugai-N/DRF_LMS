@@ -2,7 +2,7 @@ from rest_framework.generics import UpdateAPIView, RetrieveAPIView, CreateAPIVie
 from rest_framework.permissions import IsAuthenticated
 
 from users.models import User
-from users.serializers import UserSerializer, UserDetailSerializer
+from users.serializers import UserSerializer, UserDetailSerializer, UserRegisterSerializer
 
 
 class UserUpdateAPIView(UpdateAPIView):
@@ -14,7 +14,7 @@ class UserUpdateAPIView(UpdateAPIView):
 
 
 class UserCreateAPIView(CreateAPIView):
-    serializer_class = UserSerializer
+    serializer_class = UserRegisterSerializer
 
 
 class UserRetrieveAPIView(RetrieveAPIView):
