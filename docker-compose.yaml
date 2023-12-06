@@ -1,39 +1,65 @@
-# слева хостовые данные - справа контейнерные
-
 version: '3'
 services:
-  db: # неважно как называть
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'
+
+  db:
     image: postgres
+    restart: always
+    env_file:
+      - .env
+
     environment:
-#      POSTGRES_PASSWORD: mysecret
-#      PGDATA: /var/lib/postgresql/data/pgdata
-      - POSTGRES_PASSWORD=mysecret
-      - PGDATA=/var/lib/postgresql/data/pgdata
-      - POSTGRES_USER=postgres
-      - PGUSER=postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+#     если указана PGDATA, то в вольюмс прописываем путь до /var/lib/postgresql/data/pgdata, если PGDATA нет то заканчиваем на data
+#      #- PGUSER=postgres
 
     volumes:
-      - pg_data:/var/lib/postgresql/data/pgdata  # чтобы не терялись данные БД при перезапуске
+#      - pg_data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data/pgdata
+
     ports:
       - '5432:5432'
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d lmsdocker -U postgres" ]   # "pg_isready -d db-name -U db-user"
+      test: [ "CMD-SHELL", "pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}" ]
+#      test: [ "CMD-SHELL", "pg_isready -d postgres -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  app: # неважно как называть
+  app:
     build: .
-    command: python manage.py migrate && python manage.py runserver 0.0.0.0:8000 # порты здесь для возм-ти доступа внутрь контейнера
-#    volumes: # для сохранения изменений? стыкуем локальную папку с папкой code
-#      - .:/code
+#    tty: true
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+#    command: bash -c "python manage.py migrate && python manage.py csu && python manage.py runserver 0.0.0.0:8000"
     ports:
       - '8001:8000'
+    volumes:
+      - .:/code
     depends_on:
       db:
         condition: service_healthy
-#    depends_on: # зависимость от готовности БД, но иногда БД не успевает прогрузить поэтому используем healthcheck
-#      - db
+
+  celery:
+    build: .
+    command: bash -c "celery -A config worker -l INFO" #поскольку все из Линукса, то доп.приблуды для Виндоус тут не нужны
+    volumes:
+      - .:/code
+    depends_on:
+      - redis
+      - app
+
+  celery_beat:
+    build: .
+    command: bash -c "celery -A config beat -l INFO -S django"
+    volumes:
+      - .:/code
+    depends_on:
+      - redis
+      - app
+      - celery
 
 volumes:
   pg_data:
